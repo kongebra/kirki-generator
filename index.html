@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Kirki Generator</title>
+	
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" crossorigin="anonymous">
+	
+	<style>
+		.php {
+			min-height: 100px;
+			border-radius: 5px;
+			padding: 25px;
+		}
+	</style>
+</head>
+<body>
+
+<div class="container py-5">
+	
+	<div class="row">
+		<div class="col">
+			<h1 class="display-3">
+				Kirki Generator
+			</h1>
+			<!-- /.display-3 -->
+		</div>
+		<!-- /.col -->
+	</div>
+	<!-- /.row -->
+	
+	<div class="row">
+		<div class="col-3">
+			<div class="form-group">
+				<label for="textdomain">
+					<strong>Textdomain</strong>
+					<input type="text" class="form-control" id="textdomain" placeholder="Textdomain">
+					<!-- /#textdomain.form-control -->
+					<small class="text-muted">
+						This wil carry over to panel, sections and field!
+					</small>
+					<!-- /.text-muted -->
+				</label>
+			</div>
+			<!-- /.form-group -->
+		</div>
+		<!-- /.col-3 -->
+	</div>
+	<!-- /.row -->
+	
+	<ul class="nav nav-tabs" id="myTabs" role="tablist">
+		
+		<li class="nav-item">
+			<a class="nav-link active" id="config-tab" data-toggle="tab" href="#config" aria-controls="config"
+			   aria-selected="true">
+				Config
+			</a>
+			<!-- /.nav-link -->
+		</li>
+		<!-- /.nav-item -->
+		
+		<li class="nav-item">
+			<a class="nav-link" id="panel-tab" data-toggle="tab" href="#panel" aria-controls="panel"
+			   aria-selected="false">
+				Panels
+			</a>
+			<!-- /.nav-link -->
+		</li>
+		<!-- /.nav-item -->
+		
+		<li class="nav-item">
+			<a class="nav-link" id="section-tab" data-toggle="tab" href="#section" aria-controls="section"
+			   aria-selected="false">
+				Sections
+			</a>
+			<!-- /.nav-link -->
+		</li>
+		<!-- /.nav-item -->
+		
+		<li class="nav-item">
+			<a class="nav-link" id="field-tab" data-toggle="tab" href="#field" aria-controls="field"
+			   aria-selected="false">
+				Fields
+			</a>
+			<!-- /.nav-link -->
+		</li>
+		<!-- /.nav-item -->
+	
+	</ul>
+	<!-- /.nav nav-tabs -->
+	
+	<div class="tab-content py-5" id="myTabContent">
+		<div class="tab-pane fade show active" id="config" role="tabpanel" aria-labelledby="config">
+			<div class="row">
+				
+				<div class="col-4">
+					<div class="form-group">
+						<label for="config_id">
+							<strong>Config ID</strong>
+						</label>
+						<input type="text" class="form-control" id="config_id" placeholder="Config ID">
+						<!-- /.form-control -->
+						<small class="text-muted">
+							When you create a project in Kirki, the first thing you have to do is <strong>create a
+							configuration</strong>. Configurations allow each project to use a different setup and act
+							as identifiers so it’s important you create one. Fields that belong to your configuration
+							will inherit your config properties.
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col-4 -->
+				
+				<div class="col-4">
+					<div class="form-group">
+						<label for="config_capability">
+							<strong>Capability</strong>
+						</label>
+						<input type="text" class="form-control" id="config_capability" placeholder="Capability"
+						       value="edit_theme_options">
+						<!-- /.form-control -->
+						<small class="text-muted">
+							<code><strong>capability</strong></code> : any valid WordPress capability. See the <a
+								href="https://codex.wordpress.org/Roles_and_Capabilities" target="_blank">WordPress
+							Codex</a> for details.
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col-4 -->
+				
+				<div class="col-4">
+					<div class="form-group">
+						<label for="config_option_type">
+							<strong>Option Type</strong>
+						</label>
+						<input type="text" class="form-control" id="config_option_type" placeholder="Option Type"
+						       value="theme_mod">
+						<!-- /.form-control -->
+						<small class="text-muted">
+							<code><strong>option_type</strong></code> : can be either <code>option</code> or <code>theme_mod</code>.
+							Kirki recommend using <code>theme_mod</code>. If however you choose to use
+							<code>option</code> you need to understand how your data will be saved, and in most cases
+							you will also have to use the <code>option_name</code> argument as well.
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col-4 -->
+			
+			</div>
+			<!-- /.row -->
+			
+			<div class="row">
+				<div class="col text-center">
+					<button class="btn btn-dark" id="generate_config">Get Config</button>
+					<!-- /#update_code -->
+				</div>
+				<!-- /.col -->
+			</div>
+			<!-- /.row -->
+		</div>
+		<!-- /#config.tab-pane fade show active -->
+		
+		<div class="tab-pane fade" id="panel" role="tabpanel" aria-labelledby="panel">
+			<div class="row">
+				
+				<div class="col-3">
+					<div class="form-group">
+						<label for="panel_id">
+							<strong>ID</strong>
+						</label>
+						<input type="text" class="form-control" id="panel_id" placeholder="Panel ID">
+						<!-- /#panel_id.form-control -->
+						<small class="text-muted">
+						
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+				
+				<div class="col-3">
+					<div class="form-group">
+						<label for="panel_title">
+							<strong>Title</strong>
+						</label>
+						<input type="text" class="form-control" id="panel_title" placeholder="Title">
+						<!-- /#panel_title.form-control -->
+						<small class="text-muted">
+						
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+				
+				<div class="col-3">
+					<div class="form-group">
+						<label for="panel_description">
+							<strong>Description</strong>
+						</label>
+						<input type="text" class="form-control" id="panel_description" placeholder="Description">
+						<!-- /#panel_description.form-control -->
+						<small class="text-muted">
+						
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+				
+				<div class="col-3">
+					<div class="form-group">
+						<label for="panel_priority">
+							<strong>Priority</strong>
+						</label>
+						<input type="number" class="form-control" id="panel_priority" placeholder="Priority">
+						<!-- /#panel_priority.form-control -->
+						<small class="text-muted">
+							See <a href="https://developer.wordpress.org/themes/customize-api/customizer-objects/#sections" target="_">WordPress Codex</a> for the priority list.
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+				
+			</div>
+			<!-- /.row -->
+			
+			<div class="row">
+				<div class="col text-center">
+					<button class="btn btn-dark" id="generate_panel">Generate Panel</button>
+					<!-- /#generate_panel.btn btn-dark -->
+				</div>
+				<!-- /.col text-center -->
+			</div>
+			<!-- /.row -->
+		</div>
+		<!-- /#panel.tab-pane fade -->
+		
+		<div class="tab-pane fade" id="section" role="tabpanel" aria-labelledby="section">
+			<div class="row">
+				
+				<div class="col-3">
+					<div class="form-group">
+						<label for="section_id">
+							<strong>ID</strong>
+						</label>
+						<input type="text" class="form-control" id="section_id" placeholder="Section ID">
+						<!-- /#section_id.form-control -->
+						<small class="text-muted">
+						
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+			
+				<div class="col-3">
+					<div class="form-group">
+						<label for="section_title">
+							<strong>Title</strong>
+						</label>
+						<input type="text" class="form-control" id="section_title" placeholder="Title">
+						<!-- /#section_title.form-control -->
+						<small class="text-muted">
+						
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+				
+				<div class="col-3">
+					<div class="form-group">
+						<label for="section_description">
+							<strong>Description</strong>
+						</label>
+						<input type="text" class="form-control" id="section_description" placeholder="Description">
+						<!-- /#section_description.form-control -->
+						<small class="text-muted">
+						
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+				
+				<div class="col-3">
+					<div class="form-group">
+						<label for="section_priority">
+							<strong>Priority</strong>
+						</label>
+						<input type="number" class="form-control" id="section_priority" placeholder="Priority">
+						<!-- /#section_priority.form-control -->
+						<small class="text-muted">
+						
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+				
+				<div class="col-3">
+					<div class="form-group">
+						<label for="section_panel">
+							<strong>Panel</strong>
+						</label>
+						<input type="text" class="form-control" id="section_panel" placeholder="Panel">
+						<!-- /#section_panel.form-control -->
+						<small class="text-muted">
+							Not needed, unless section goes under a panel.
+						</small>
+						<!-- /.text-muted -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+				
+			</div>
+			<!-- /.row -->
+			
+			<div class="row">
+				<div class="col text-center">
+					<button class="btn btn-dark" id="generate_section">Generate Section</button>
+					<!-- /#generate_section.btn btn-dark -->
+				</div>
+				<!-- /.col text-center -->
+			</div>
+			<!-- /.row -->
+			
+			<div class="row">
+			
+			</div>
+			<!-- /.row -->
+		</div>
+		<!-- /#section.tab-pane fade -->
+		
+		<div class="tab-pane fade" id="field" role="tabpanel" aria-labelledby="field">
+			<div class="row">
+				<div class="col-4">
+					
+					<div class="form-group">
+						<label for="field_type">
+							<strong>Field Type</strong>
+						</label>
+						<select name="field_type" id="field_type" class="form-control">
+							<option value="background">Background</option>
+							<option value="checkbox">Checkbox</option>
+							<option value="code">Code</option>
+							<option value="color-palette">Color Palette</option>
+							<option value="color">Color</option>
+							<option value="Custom">Custom</option>
+							<option value="dashicon">Dashicon</option>
+							<option value="date">Date</option>
+							<option value="dimension">Dimension</option>
+							<option value="dimensions">Dimensions</option>
+							<option value="dropdown-pages">Dropdown Pages</option>
+							<option value="editor">Editor</option>
+							<option value="fontawesome">Fontawesome</option>
+							<option value="generic">Generic</option>
+							<option value="image">Image</option>
+							<option value="link">Link</option>
+							<option value="multicheck">Multicheck</option>
+							<option value="multicolor">Multicolor</option>
+							<option value="number">Number</option>
+							<option value="palette">Palette</option>
+							<option value="preset">Preset</option>
+							<option value="radio-buttonset">Radio Buttonset</option>
+							<option value="radio-image">Radio Image</option>
+							<option value="radio">Radio</option>
+							<option value="repeater">Repeater</option>
+							<option value="select">Select</option>
+							<option value="slider">Slider</option>
+							<option value="sortable">Sortable</option>
+							<option value="spacing">Spacing</option>
+							<option value="switch">Switch</option>
+							<option value="text">Text</option>
+							<option value="textarea">Textarea</option>
+							<option value="toggle">Toggle</option>
+							<option value="typography">Typography</option>
+							<option value="upload">Upload</option>
+						</select>
+						<!-- /#field_type.form-control -->
+					</div>
+					<!-- /.form-group -->
+				</div>
+				<!-- /.col -->
+			</div>
+			<!-- /.row -->
+			
+			<hr>
+			
+			<div class="row" id="field_container"></div>
+			<!-- /.row -->
+			
+			<div class="row">
+				
+				<div class="col text-center">
+					<button class="btn btn-dark" id="generate_field">Generate Field</button>
+					<!-- /#generate_field.btn btn-dark -->
+				</div>
+				<!-- /.col text-center -->
+				
+			</div>
+			<!-- /.row -->
+		</div>
+		<!-- /#field.tab-pane fade -->
+	
+	</div>
+	<!-- /#myTabContent.tab-content -->
+
+</div>
+<!-- /.container -->
+
+<section class="py-5">
+	<div class="container">
+		
+		<pre><code class="php" id="result"></code></pre>
+	
+	</div>
+	<!-- /.container -->
+</section>
+<!-- /.bg-dark -->
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>

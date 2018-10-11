@@ -85,6 +85,9 @@
             case 'background':
                 print_field_background();
                 break;
+            case 'checkbox':
+                print_field_checkbox();
+                break;
             case 'text':
                 print_field_text();
                 return;
@@ -161,7 +164,15 @@
             'initial',
             'inherit'
         ]);
+    }
 
+    function print_field_checkbox() {
+        let $container = $('#field_container');
+        $container.text('');
+
+        print_field_defaults($container);
+
+        print_input($container, 'Default', 'field_default', 'checkbox');
     }
 
     /**
@@ -170,28 +181,35 @@
      * @param {string} selector
      * @param {string} label
      * @param {string} id
-     * @param {string} inputType
+     * @param {string} type
      * @param {string} description
      * @param {array} options
      */
-    function print_input(selector, label, id, inputType, description = '', options = []) {
+    function print_input(selector, label, id, type, description = '', options = []) {
         let str = '';
         str += '<div class="col-3">';
         str += '<div class="form-group">';
-        str += '<label for="' + id + '"><strong>' + label + '</strong></label>';
 
-        // Options array is empty
-        if (options.length === 0) {
-            str += '<input type="' + inputType + '" class="form-control" id="' + id + '" placeholder="' + label + '">';
-        } else {
-            str += '<select name="' + id + '" id="' + id + '" class="form-control">';
-            let first = true;
-            // Loop through options
-            options.forEach(e => {
-                str += '<option value="' + e.toLowerCase() + '"  '+((first)?'selected':'')+'>' + e + '</option>';
-                first = false;
-            });
-            str += '</select>';
+        str += '<label for="' + id + '"><strong>' + label + '</strong></label>';
+        switch (type) {
+            case 'text':
+            case 'number':
+            case 'color':
+                str += '<input type="' + type + '" class="form-control" id="' + id + '" placeholder="' + label + '">';
+                break;
+            case 'select':
+                str += '<select name="' + id + '" id="' + id + '" class="form-control">';
+                let first = true;
+                // Loop through options
+                options.forEach(e => {
+                    str += '<option value="' + e.toLowerCase() + '"  ' + ((first) ? 'selected' : '') + '>' + e + '</option>';
+                    first = false;
+                });
+                str += '</select>';
+                break;
+            case 'checkbox':
+                str += '<input type="checkbox" class="custom-checkbox" id="' + id + '">';
+                break;
         }
 
         // If there is a description
@@ -226,6 +244,9 @@
             case 'background':
                 generate_field_background();
                 return;
+            case 'checkbox':
+                generate_field_checkbox();
+                break;
             case 'text':
                 generate_field_text();
                 return;
@@ -302,6 +323,36 @@
         str += `\t\t'background-size'\t=> '${bg.size}'\n`;
         str += `\t\t'background-attachment'\t=> '${bg.attachment}'\n`;
         str += `\t),`;
+        str += `) );`;
+
+        $OUTPUT.text(str);
+    }
+
+    /**
+     * Generate all the fields for a checkbox-field
+     */
+    function generate_field_checkbox() {
+        let textdomain = $('#textdomain').val();
+        let settings = $('#field_settings').val();
+        let label = $('#field_label').val();
+        let description = $('#field_description').val();
+        let section = $('#field_section').val();
+        let prior = $('#field_priority').val();
+        let _default = $('#field_default').is(':checked');
+
+        let str = `Kirki::add_field( '${textdomain}', array(\n`;
+        str += `\t'type'\t\t=> 'text',\n`;
+        str += `\t'settings'\t=> '${settings}',\n`;
+        str += `\t'label'\t\t=> esc_attr__( '${label}', '${textdomain}' ),\n`;
+
+        // If there is a description
+        if (description.length > 0) {
+            str += `\t'description'\t=> '${description}',\n`;
+        }
+
+        str += `\t'section'\t=> '${section}',\n`;
+        str += `\t'default'\t=> ${_default},\n`;
+        str += `\t'priority'\t=> ${prior},\n`;
         str += `) );`;
 
         $OUTPUT.text(str);

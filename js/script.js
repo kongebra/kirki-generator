@@ -113,6 +113,9 @@
             case 'color-palette':
                 print_field_color_palette();
                 break;
+            case 'color':
+                print_field_color();
+                break;
             case 'text':
                 print_field_text();
                 return;
@@ -246,6 +249,17 @@
         ]);
     }
 
+    function print_field_color() {
+        let $container = get_field_container();
+
+        print_field_defaults($container);
+        print_input($container, 'Default', 'field_default', INPUT_TYPE.COLOR);
+
+        print_div($container, 'col-12 mb-3', '<h3>Choices</h3>');
+        print_input($container, 'Alpha', 'field_alpha', INPUT_TYPE.CHECKBOX);
+        print_input($container, 'Hue', 'field_hue', INPUT_TYPE.CHECKBOX, 'If you use a hue-only control the saved value will not be a hex or rgba color. Instead the value will be an integer. You can use that value in HSL or HSLA colors in your themes. For more info on HSLA you can read <a href="https://css-tricks.com/yay-for-hsla/" target="_blank">this article</a>');
+    }
+
     /**
      * Print an input field
      *
@@ -323,6 +337,9 @@
                 break;
             case 'color-palette':
                 generate_field_color_palette();
+                break;
+            case 'color':
+                generate_field_color();
                 break;
             case 'text':
                 generate_field_text();
@@ -463,6 +480,31 @@
         }
 
         str += `\t),\n`;
+        str += `) );`;
+
+        $OUTPUT.text(str);
+    }
+
+    /**
+     * Generates all the fields for the color-field
+     */
+    function generate_field_color() {
+        let alpha = $('#field_alpha').is(':checked');
+        let hue = $('#field_hue').is(':checked');
+
+        let str = generate_field_standards(true);
+
+        // Check if alpha is checked
+        if (alpha && !hue) {
+            str += `\t'choices'\t=> array(\n`;
+            str += `\t\t'alpha'\t=> ${alpha},\n`;
+            str += `\t),\n`;
+        }
+
+        if (hue) {
+            str += `\t'mode'\t\t=> 'hue',\n`;
+        }
+
         str += `) );`;
 
         $OUTPUT.text(str);

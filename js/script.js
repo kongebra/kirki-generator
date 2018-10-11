@@ -1,11 +1,30 @@
 (function ($) {
 
+    const INPUT_TYPE = {
+        TEXT: 'text',
+        SELECT: 'select',
+        COLOR: 'color',
+        NUMBER: 'number',
+        CHECKBOX: 'checkbox',
+    };
+
     /**
      * Output field
      *
      * @type {*}
      */
     const $OUTPUT = $('#result');
+
+    /**
+     * Clears the text of the field_container and returns it.
+     * @returns {*}
+     */
+    function get_field_container() {
+        let $container = $('#field_container');
+        $container.text('');
+
+        return $container;
+    }
 
     /**
      *  Generates Kirki code for the config
@@ -91,6 +110,9 @@
             case 'code':
                 print_field_code();
                 break;
+            case 'color-palette':
+                print_field_color_palette();
+                break;
             case 'text':
                 print_field_text();
                 return;
@@ -103,38 +125,36 @@
      * @param {string} selector
      */
     function print_field_defaults(selector) {
-        print_input(selector, 'Settings', 'field_settings', 'text');
-        print_input(selector, 'Label', 'field_label', 'text');
-        print_input(selector, 'Description', 'field_description', 'text', 'Will not show in the output if empty.');
-        print_input(selector, 'Section', 'field_section', 'text');
-        print_input(selector, 'Priority', 'field_priority', 'number');
+        print_input(selector, 'Settings', 'field_settings', INPUT_TYPE.TEXT);
+        print_input(selector, 'Label', 'field_label', INPUT_TYPE.TEXT);
+        print_input(selector, 'Description', 'field_description', INPUT_TYPE.TEXT, 'Will not show in the output if empty.');
+        print_input(selector, 'Section', 'field_section', INPUT_TYPE.TEXT);
+        print_input(selector, 'Priority', 'field_priority', INPUT_TYPE.NUMBER);
     }
 
     /**
      * Prints the fields for the text field
      */
     function print_field_text() {
-        let $container = $('#field_container');
-        $container.text('');
+        let $container = get_field_container();
 
         print_field_defaults($container);
-        print_input($container, 'Default', 'field_default', 'text');
+        print_input($container, 'Default', 'field_default', INPUT_TYPE.TEXT);
     }
 
     /**
      * Prints the fields for the background field
      */
     function print_field_background() {
-        let $container = $('#field_container');
-        $container.text('');
+        let $container = get_field_container();
 
         print_field_defaults($container);
 
         print_div($container, 'col-12 mt-3', '<h3>Default:</h3>');
 
-        print_input($container, 'Background Color', 'field_background_color', 'color');
-        print_input($container, 'Background Image', 'field_background_image', 'text');
-        print_input($container, 'Background Repeat', 'field_background_repeat', 'select', '', [
+        print_input($container, 'Background Color', 'field_background_color', INPUT_TYPE.COLOR);
+        print_input($container, 'Background Image', 'field_background_image', INPUT_TYPE.TEXT);
+        print_input($container, 'Background Repeat', 'field_background_repeat', INPUT_TYPE.SELECT, '', [
             'repeat',
             'repeat-x',
             'repeat-y',
@@ -142,7 +162,7 @@
             'initial',
             'inherit'
         ]);
-        print_input($container, 'Background Position', 'field_background_position', 'select', '', [
+        print_input($container, 'Background Position', 'field_background_position', INPUT_TYPE.SELECT, '', [
             'left top',
             'left center',
             'left bottom',
@@ -153,14 +173,14 @@
             'center center',
             'center bottom'
         ]);
-        print_input($container, 'Background Size', 'field_background_size', 'select', '', [
+        print_input($container, 'Background Size', 'field_background_size', INPUT_TYPE.SELECT, '', [
             'auto',
             'cover',
             'contain',
             'initial',
             'inherit'
         ]);
-        print_input($container, 'Background Attachment', 'field_background_attachment', 'select', '', [
+        print_input($container, 'Background Attachment', 'field_background_attachment', INPUT_TYPE.SELECT, '', [
             'scroll',
             'fixed',
             'local',
@@ -173,12 +193,11 @@
      * Prints the fields for the checkbox field
      */
     function print_field_checkbox() {
-        let $container = $('#field_container');
-        $container.text('');
+        let $container = get_field_container();
 
         print_field_defaults($container);
 
-        print_input($container, 'Default', 'field_default', 'checkbox');
+        print_input($container, 'Default', 'field_default', INPUT_TYPE.CHECKBOX);
     }
 
     /**
@@ -187,19 +206,43 @@
      * TODO: Find more choices? And add as many languages that is supported.
      */
     function print_field_code() {
-        let $container = $('#field_container');
-        $container.text('');
+        let $container = get_field_container();
 
         print_field_defaults($container);
-        print_input($container, 'Default', 'field_default', 'text');
+        print_input($container, 'Default', 'field_default', INPUT_TYPE.TEXT);
 
         print_div($container, 'col-12 mb-3', '<h3>Choices</h3>');
-        print_input($container, 'Language', 'field_language', 'select', '', [
+        print_input($container, 'Language', 'field_language', INPUT_TYPE.SELECT, '', [
             'CSS',
             'HTML',
             'PHP',
             'Javascript',
             'JSON',
+        ]);
+    }
+
+    /**
+     * Prints the fields for the color palette field
+     */
+    function print_field_color_palette() {
+        let $container = get_field_container();
+
+        print_field_defaults($container);
+        print_input($container, 'Default', 'field_default', INPUT_TYPE.COLOR);
+
+        print_div($container, 'col-12 mb-3', '<h3>Choices</h3>');
+
+        print_input($container, 'Colors', 'field_colors', INPUT_TYPE.SELECT, 'Please see <a href="https://aristath.github.io/kirki/docs/controls/color-palette.html" target="_blank">Kirki Docs</a> for more information.', [
+            'All',
+            'Primary',
+            'Textdomain',
+            'A100',
+        ] );
+
+        print_input($container, 'Size', 'field_size', INPUT_TYPE.NUMBER, 'Size in pixels.');
+        print_input($container, 'Style', 'field_style', INPUT_TYPE.SELECT, '', [
+            'Square',
+            'Round',
         ]);
     }
 
@@ -277,6 +320,9 @@
                 break;
             case 'code':
                 generate_field_code();
+                break;
+            case 'color-palette':
+                generate_field_color_palette();
                 break;
             case 'text':
                 generate_field_text();
@@ -391,6 +437,31 @@
 
         str += `\t'choices'\t=> array(\n`;
         str += `\t\t'language'\t=> '${language}',\n`;
+        str += `\t),\n`;
+        str += `) );`;
+
+        $OUTPUT.text(str);
+    }
+
+    /**
+     * Generates all the fields for the color-palette-field
+     */
+    function generate_field_color_palette() {
+        let _default = $('#field_default').val();
+        let colors = $('#field_colors').val();
+        let size = $('#field_size').val();
+        let style = $('#field_style').val();
+
+        let str = generate_field_standards(false);
+        str += `\t'default'\t=> ${_default},\n`;
+        str += `\t'choices'\t=> array(\n`;
+        str += `\t\t'colors'\t=> Kirki_Helper::get_material_design_colors( '${colors}' ),\n`;
+        str += `\t\t'size'\t\t=> ${size},\n`;
+
+        if ( style === 'round' ) {
+            str += `\t\t'style'\t\t=> '${style}',\n`;
+        }
+
         str += `\t),\n`;
         str += `) );`;
 

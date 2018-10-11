@@ -88,6 +88,9 @@
             case 'checkbox':
                 print_field_checkbox();
                 break;
+            case 'code':
+                print_field_code();
+                break;
             case 'text':
                 print_field_text();
                 return;
@@ -166,6 +169,9 @@
         ]);
     }
 
+    /**
+     * Prints the fields for the checkbox field
+     */
     function print_field_checkbox() {
         let $container = $('#field_container');
         $container.text('');
@@ -176,9 +182,31 @@
     }
 
     /**
+     * Prints the fields for the code field
+     *
+     * TODO: Find more choices? And add as many languages that is supported.
+     */
+    function print_field_code() {
+        let $container = $('#field_container');
+        $container.text('');
+
+        print_field_defaults($container);
+        print_input($container, 'Default', 'field_default', 'text');
+
+        print_div($container, 'col-12 mb-3', '<h3>Choices</h3>');
+        print_input($container, 'Language', 'field_language', 'select', '', [
+            'CSS',
+            'HTML',
+            'PHP',
+            'Javascript',
+            'JSON',
+        ]);
+    }
+
+    /**
      * Print an input field
      *
-     * @param {string} selector
+     * @param {*} selector
      * @param {string} label
      * @param {string} id
      * @param {string} type
@@ -226,7 +254,7 @@
     /**
      * Prints a <div> with class and content
      *
-     * @param {string} selector
+     * @param {*} selector
      * @param {string} _class
      * @param {string} content
      */
@@ -247,10 +275,50 @@
             case 'checkbox':
                 generate_field_checkbox();
                 break;
+            case 'code':
+                generate_field_code();
+                break;
             case 'text':
                 generate_field_text();
                 return;
         }
+    }
+
+    /**
+     * Generates all the standard fields for every field, with option to remove the 'default' index
+     *
+     * @param {boolean} with_default
+     * @returns {string}
+     */
+    function generate_field_standards(with_default = true) {
+        let textdomain = $('#textdomain').val();
+        let settings = $('#field_settings').val();
+        let label = $('#field_label').val();
+        let description = $('#field_description').val();
+        let section = $('#field_section').val();
+        let _default = $('#field_default').val();
+        let prior = $('#field_priority').val();
+
+        let str = `Kirki::add_field( '${textdomain}', array(\n`;
+        str += `\t'type'\t\t=> '${get_field_type()}',\n`;
+        str += `\t'settings'\t=> '${settings}',\n`;
+        str += `\t'label'\t\t=> esc_attr__( '${label}', '${textdomain}' ),\n`;
+
+        // If there is a description
+        if (description.length > 0) {
+            str += `\t'description'\t=> '${description}',\n`;
+        }
+
+        str += `\t'section'\t=> '${section}',\n`;
+
+        // Check if we want the default
+        if (with_default) {
+            str += `\t'default'\t=> '${_default}',\n`;
+        }
+
+        str += `\t'priority'\t=> ${prior},\n`;
+
+        return str;
     }
 
     /**
@@ -265,19 +333,8 @@
         let _default = $('#field_default').val();
         let prior = $('#field_priority').val();
 
-        let str = `Kirki::add_field( '${textdomain}', array(\n`;
-        str += `\t'type'\t\t=> 'text',\n`;
-        str += `\t'settings'\t=> '${settings}',\n`;
-        str += `\t'label'\t\t=> esc_attr__( '${label}', '${textdomain}' ),\n`;
+        let str = generate_field_standards();
 
-        // If there is a description
-        if (description.length > 0) {
-            str += `\t'description'\t=> '${description}',\n`;
-        }
-
-        str += `\t'section'\t=> '${section}',\n`;
-        str += `\t'default'\t=> '${_default}',\n`;
-        str += `\t'priority'\t=> ${prior},\n`;
         str += `) );`;
 
         $OUTPUT.text(str);
@@ -287,13 +344,6 @@
      * Generates all the fields for a background-field
      */
     function generate_field_background() {
-        let textdomain = $('#textdomain').val();
-        let settings = $('#field_settings').val();
-        let label = $('#field_label').val();
-        let description = $('#field_description').val();
-        let section = $('#field_section').val();
-        let prior = $('#field_priority').val();
-
         let bg = {
             color: $('#field_background_color').val(),
             image: $('#field_background_image').val(),
@@ -303,18 +353,8 @@
             attachment: $('#field_background_attachment').val()
         };
 
+        let str = generate_field_standards(false);
 
-        let str = `Kirki::add_field( '${textdomain}', array(\n`;
-        str += `\t'type'\t\t=> 'background',\n`;
-        str += `\t'settings'\t=> '${settings}',\n`;
-        str += `\t'label'\t\t=> esc_attr__( '${label}', '${textdomain}' ),\n`;
-
-        if (description.length > 0) {
-            str += `\t'description'\t=> esc_attr__( '${description}', '${textdomain}' ),\n`;
-        }
-
-        str += `\t'section'\t=> '${section}',\n`;
-        str += `\t'priority'\t=> ${prior},\n`;
         str += `\t'default'\t=> array(\n`;
         str += `\t\t'background-color'\t=> '${bg.color}'\n`;
         str += `\t\t'background-image'\t=> '${bg.image}'\n`;
@@ -332,27 +372,26 @@
      * Generate all the fields for a checkbox-field
      */
     function generate_field_checkbox() {
-        let textdomain = $('#textdomain').val();
-        let settings = $('#field_settings').val();
-        let label = $('#field_label').val();
-        let description = $('#field_description').val();
-        let section = $('#field_section').val();
-        let prior = $('#field_priority').val();
         let _default = $('#field_default').is(':checked');
 
-        let str = `Kirki::add_field( '${textdomain}', array(\n`;
-        str += `\t'type'\t\t=> 'text',\n`;
-        str += `\t'settings'\t=> '${settings}',\n`;
-        str += `\t'label'\t\t=> esc_attr__( '${label}', '${textdomain}' ),\n`;
-
-        // If there is a description
-        if (description.length > 0) {
-            str += `\t'description'\t=> '${description}',\n`;
-        }
-
-        str += `\t'section'\t=> '${section}',\n`;
+        let str = generate_field_standards(false);
         str += `\t'default'\t=> ${_default},\n`;
-        str += `\t'priority'\t=> ${prior},\n`;
+        str += `) );`;
+
+        $OUTPUT.text(str);
+    }
+
+    /**
+     * Generates all the fields for the code-field
+     */
+    function generate_field_code() {
+        let language = $('#field_language').val();
+
+        let str = generate_field_standards();
+
+        str += `\t'choices'\t=> array(\n`;
+        str += `\t\t'language'\t=> '${language}',\n`;
+        str += `\t),\n`;
         str += `) );`;
 
         $OUTPUT.text(str);
